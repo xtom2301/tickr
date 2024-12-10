@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Header } from "./components/index";
-import { Dashboard, Settings } from "./pages/index";
+import { ChecklistDetails, Dashboard, Settings } from "./pages/index";
 
 function App() {
   return (
@@ -11,6 +11,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/checklist/:id" element={<ChecklistDetails />} />
           </Routes>
         </div>
       </Router>
