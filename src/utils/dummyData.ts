@@ -1,8 +1,9 @@
 import { Checklist } from "../types/checklist";
+import { v4 as uuidv4 } from "uuid";
 
 export const dummyChecklists: Checklist[] = [
   {
-    id: "1",
+    id: `checklist-${uuidv4()}`,
     title: "Checklist 1",
     items: [
       { id: "1", text: "Item 1", completed: false },
@@ -13,7 +14,7 @@ export const dummyChecklists: Checklist[] = [
     updatedAt: new Date(),
   },
   {
-    id: "2",
+    id: `checklist-${uuidv4()}`,
     title: "Checklist 2",
     items: [
       { id: "1", text: "Item 1", completed: false },
@@ -24,7 +25,7 @@ export const dummyChecklists: Checklist[] = [
     updatedAt: new Date(),
   },
   {
-    id: "3",
+    id: `checklist-${uuidv4()}`,
     title: "Checklist 3",
     items: [
       { id: "1", text: "Item 1", completed: false },
@@ -35,7 +36,7 @@ export const dummyChecklists: Checklist[] = [
     updatedAt: new Date(),
   },
   {
-    id: "4",
+    id: `checklist-${uuidv4()}`,
     title: "Checklist 4",
     items: [
       { id: "1", text: "Item 1", completed: false },
@@ -46,7 +47,7 @@ export const dummyChecklists: Checklist[] = [
     updatedAt: new Date(),
   },
   {
-    id: "5",
+    id: `checklist-${uuidv4()}`,
     title: "Checklist 5",
     items: [
       { id: "1", text: "Item 1", completed: false },

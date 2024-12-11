@@ -10,8 +10,8 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10 px-4">
         {dummyChecklists.map((checklist) => (
           <Link
-            to={`/checklist/${checklist.title}`}
-            className="bg-white text-black p-4 rounded-md"
+            to={`/checklist/${checklist.id}`}
+            className="bg-gray-900 text-white p-4 rounded-md hover:scale-105 transition-all duration-300"
             key={checklist.id}
           >
             {checklist.title}
