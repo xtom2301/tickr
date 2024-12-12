@@ -1,7 +1,6 @@
-import { dummyChecklists } from "../utils/dummyData";
 import { ChecklistItem, Checklist as ChecklistType } from "../types/checklist";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface ChecklistProps {
@@ -10,9 +9,23 @@ interface ChecklistProps {
 
 const Checklist = ({ id }: ChecklistProps) => {
   const [checklist, setChecklist] = useState<ChecklistType | undefined>(
-    dummyChecklists.find((checklist) => checklist.id === id)
+    JSON.parse(localStorage.getItem("checklists") || "[]").find(
+      (checklist: ChecklistType) => checklist.id === id
+    )
   );
   const [newItem, setNewItem] = useState("");
+
+  useEffect(() => {
+    if (!checklist) return;
+
+    const checklists = JSON.parse(localStorage.getItem("checklists") || "[]");
+
+    const updatedChecklists = checklists.map((c: ChecklistType) =>
+      c.id === checklist.id ? checklist : c
+    );
+
+    localStorage.setItem("checklists", JSON.stringify(updatedChecklists));
+  }, [checklist]);
 
   if (!checklist) {
     return <div>Checklist not found</div>;

@@ -1,16 +1,34 @@
 import { Link } from "react-router-dom";
-import { dummyChecklists } from "../utils/dummyData";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Checklist } from "../types/checklist";
 import { v4 as uuidv4 } from "uuid";
 const Dashboard = () => {
-  const [checklists, setChecklists] = useState<Checklist[]>(dummyChecklists);
+  const [checklists, setChecklists] = useState<Checklist[]>(() => {
+    try {
+      const savedChecklists = localStorage.getItem("checklists");
+      if (!savedChecklists) return [];
+
+      const parsedChecklists = JSON.parse(savedChecklists);
+      if (!Array.isArray(parsedChecklists)) {
+        localStorage.removeItem("checklists");
+        return [];
+      }
+
+      return parsedChecklists;
+    } catch (error) {
+      console.error("Error parsing checklists from localStorage:", error);
+      localStorage.removeItem("checklists");
+      return [];
+    }
+  });
   const [newChecklistName, setNewChecklistName] = useState<string>("");
 
   const handleDeleteChecklist = (checklist: Checklist) => {
     if (confirm(`Are you sure you want to delete ${checklist.title}?`)) {
-      setChecklists(checklists.filter((c) => c.id !== checklist.id));
+      const updatedChecklists = checklists.filter((c) => c.id !== checklist.id);
+      setChecklists(updatedChecklists);
+      localStorage.setItem("checklists", JSON.stringify(updatedChecklists));
     }
   };
 
@@ -24,7 +42,9 @@ const Dashboard = () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setChecklists([...checklists, newChecklist]);
+    const updatedChecklists = [...checklists, newChecklist];
+    setChecklists(updatedChecklists);
+    localStorage.setItem("checklists", JSON.stringify(updatedChecklists));
     setNewChecklistName("");
   };
 
