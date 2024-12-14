@@ -1,8 +1,24 @@
 import { ChecklistItem, Checklist as ChecklistType } from "../types/checklist";
-import { ArrowBigLeft, Trash2 } from "lucide-react";
+import { ArrowBigLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableItem } from "./SortableItem";
 
 interface ChecklistProps {
   id: string;
@@ -10,24 +26,28 @@ interface ChecklistProps {
 
 const Checklist = ({ id }: ChecklistProps) => {
   const navigate = useNavigate();
-  const [checklist, setChecklist] = useState<ChecklistType | undefined>(
-    JSON.parse(localStorage.getItem("checklists") || "[]").find(
-      (checklist: ChecklistType) => checklist.id === id
-    )
-  );
+  const [checklist, setChecklist] = useState<ChecklistType | undefined>(() => {
+    const checklists = JSON.parse(localStorage.getItem("checklists") || "[]");
+    return checklists.find((checklist: ChecklistType) => checklist.id === id);
+  });
   const [newItem, setNewItem] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (!checklist) return;
 
     const checklists = JSON.parse(localStorage.getItem("checklists") || "[]");
-
     const updatedChecklists = checklists.map((c: ChecklistType) =>
-      c.id === checklist.id ? checklist : c
+      c.id === id ? checklist : c
     );
-
     localStorage.setItem("checklists", JSON.stringify(updatedChecklists));
-  }, [checklist]);
+  }, [checklist, id]);
 
   if (!checklist) {
     return <div>Checklist not found</div>;
@@ -52,10 +72,38 @@ const Checklist = ({ id }: ChecklistProps) => {
   };
 
   const handleToggleItem = (item: ChecklistItem) => {
-    const updatedChecklist = checklist.items.map((i) =>
+    if (!checklist) return;
+
+    const updatedItems = checklist.items.map((i) =>
       i.id === item.id ? { ...i, completed: !i.completed } : i
     );
-    setChecklist({ ...checklist, items: updatedChecklist });
+    const updatedChecklist = { ...checklist, items: updatedItems };
+
+    const checklists = JSON.parse(localStorage.getItem("checklists") || "[]");
+    const updatedChecklists = checklists.map((c: ChecklistType) =>
+      c.id === id ? updatedChecklist : c
+    );
+
+    localStorage.setItem("checklists", JSON.stringify(updatedChecklists));
+
+    setChecklist(updatedChecklist);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setChecklist((prev) => {
+        if (!prev) return prev;
+        const oldIndex = prev.items.findIndex((item) => item.id === active.id);
+        const newIndex = prev.items.findIndex((item) => item.id === over?.id);
+
+        return {
+          ...prev,
+          items: arrayMove(prev.items, oldIndex, newIndex),
+        };
+      });
+    }
   };
 
   return (
@@ -94,26 +142,25 @@ const Checklist = ({ id }: ChecklistProps) => {
         </button>
       </div>
 
-      {checklist.items.map((item) => (
-        <div
-          className="w-full max-w-md p-4 rounded-md bg-gray-900 text-white mb-4 flex flex-row justify-between items-center"
-          key={item.id}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={checklist.items.map((item) => item.id)}
+          strategy={verticalListSortingStrategy}
         >
-          <div className="flex flex-row items-center gap-4">
-            <input
-              className="w-6 h-6 text-green-600"
-              type="checkbox"
-              checked={item.completed}
-              onChange={() => handleToggleItem(item)}
+          {checklist.items.map((item) => (
+            <SortableItem
+              key={item.id}
+              item={item}
+              onDelete={handleDeleteItem}
+              onToggle={handleToggleItem}
             />
-            <h1 className={"text-lg cursor-pointer"}>{item.text}</h1>
-          </div>
-          <Trash2
-            className="text-red-500 cursor-pointer"
-            onClick={() => handleDeleteItem(item)}
-          />
-        </div>
-      ))}
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 };
