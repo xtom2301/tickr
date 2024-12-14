@@ -1,6 +1,7 @@
 import { ChecklistItem, Checklist as ChecklistType } from "../types/checklist";
-import { Trash2 } from "lucide-react";
+import { ArrowBigLeft, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 interface ChecklistProps {
@@ -8,6 +9,7 @@ interface ChecklistProps {
 }
 
 const Checklist = ({ id }: ChecklistProps) => {
+  const navigate = useNavigate();
   const [checklist, setChecklist] = useState<ChecklistType | undefined>(
     JSON.parse(localStorage.getItem("checklists") || "[]").find(
       (checklist: ChecklistType) => checklist.id === id
@@ -58,7 +60,15 @@ const Checklist = ({ id }: ChecklistProps) => {
 
   return (
     <div className="flex flex-col items-center text-white">
-      <div className="text-4xl font-bold mb-10">{checklist.title}</div>
+      <div className="flex flex-row justify-between w-full max-w-md items-center">
+        <div className="text-4xl font-bold mb-10">{checklist.title}</div>
+        <div className="text-4xl font-bold mb-10">
+          <ArrowBigLeft
+            className="cursor-pointer w-10 h-10"
+            onClick={() => navigate("/")}
+          />
+        </div>
+      </div>
       <div className="flex flex-row justify-between w-full max-w-md mb-10">
         <input
           type="text"

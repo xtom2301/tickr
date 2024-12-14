@@ -14,9 +14,6 @@ const Header = () => {
           </Link>
         </div>
       </div>
-      <Link to="/settings" className="text-white">
-        Settings
-      </Link>
     </header>
   );
 };
