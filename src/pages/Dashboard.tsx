@@ -50,10 +50,10 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="text-3xl font-bold text-white text-center">
+      <div className="text-3xl font-bold text-white text-center px-4">
         Create New Checklists or View Existing Ones
       </div>
-      <div className="flex flex-row items-center justify-center mt-10">
+      <div className="flex flex-row items-center justify-center mt-10 px-4">
         <input
           type="text"
           placeholder="Add a checklist"
@@ -81,7 +81,9 @@ const Dashboard = () => {
             className="flex flex-row items-center justify-between bg-gray-900 p-4 rounded-md hover:scale-105 transition-all duration-300"
           >
             <div className="text-white rounded-md" key={checklist.id}>
-              {checklist.title}
+              {checklist.title.length > 20
+                ? checklist.title.slice(0, 20) + "..."
+                : checklist.title}
             </div>
             <Trash2
               className="text-red-500 cursor-pointer"

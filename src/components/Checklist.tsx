@@ -60,8 +60,12 @@ const Checklist = ({ id }: ChecklistProps) => {
 
   return (
     <div className="flex flex-col items-center text-white">
-      <div className="flex flex-row justify-between w-full max-w-md items-center">
-        <div className="text-4xl font-bold mb-10">{checklist.title}</div>
+      <div className="flex flex-row justify-between w-full max-w-md items-center px-4">
+        <div className="text-4xl font-bold mb-10">
+          {checklist.title.length > 12
+            ? checklist.title.slice(0, 12) + "..."
+            : checklist.title}
+        </div>
         <div className="text-4xl font-bold mb-10">
           <ArrowBigLeft
             className="cursor-pointer w-10 h-10"
@@ -69,7 +73,7 @@ const Checklist = ({ id }: ChecklistProps) => {
           />
         </div>
       </div>
-      <div className="flex flex-row justify-between w-full max-w-md mb-10">
+      <div className="flex flex-row justify-between w-full max-w-md mb-10 px-4">
         <input
           type="text"
           placeholder="Add an item"
