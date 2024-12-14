@@ -3,6 +3,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Checklist } from "../types/checklist";
 import { v4 as uuidv4 } from "uuid";
+import { Footer } from "../components";
 const Dashboard = () => {
   const [checklists, setChecklists] = useState<Checklist[]>(() => {
     try {
@@ -96,6 +97,7 @@ const Dashboard = () => {
           </Link>
         ))}
       </div>
+      <Footer />
     </div>
   );
 };

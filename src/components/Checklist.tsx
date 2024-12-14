@@ -19,6 +19,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableItem } from "./SortableItem";
+import { Footer } from ".";
 
 interface ChecklistProps {
   id: string;
@@ -161,6 +162,7 @@ const Checklist = ({ id }: ChecklistProps) => {
           ))}
         </SortableContext>
       </DndContext>
+      <Footer />
     </div>
   );
 };
